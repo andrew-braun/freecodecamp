@@ -3,9 +3,10 @@
 const palindrome = (str) => {
   let cleanStr = str.replace(new RegExp(/[\W_]/g), "").toLowerCase();
   let backwards = cleanStr.split("").reverse().join("");
+  console.log(backwards);
 
-  return backwards;
+  return backwards === cleanStr;
 }
 
-console.log(palindrome("_eye"));
+console.log(palindrome(""));
 console.log(palindrome("Not a palindrome"));
