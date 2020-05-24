@@ -1,4 +1,5 @@
 function convertToRoman(num) {
+    // Store all necessary Roman-Arabic conversions in an object
     let romanNumeralKey = {
         1: "I",
         4: "IV",
@@ -14,63 +15,29 @@ function convertToRoman(num) {
         900: "CM",
         1000: "M"
       }
+
+    // Create array of Arabic numerals to loop through later
     let digits = Object.keys(romanNumeralKey).reverse();
-
-    let arabicArray = num.toString()
-                      .split("")
-                      .map( (num, index, arr) => 
-                        Number(num.concat("0".repeat(arr.length-1-index))))
-                      .reverse();
+    // Create number copy of input to subtract from as Roman numerals are added
+    let counter = Number(num);
+    // Array to store converted Roman numerals
     let latinArray = [];
-
-    for (let i=0; i<arabicArray.length; i++) {
-      while (arabicArray[i] > 0) {
-        for (let digit of digits) {
-          if (arabicArray[i] - digit >= 0) {
-            console.log(digit)
-            latinArray.push(romanNumeralKey[digit])
-            arabicArray[i] -= digit;
-            break
-          } else {
-            delete arabicArray[i];
-            break
-        }
+    
+    // Reduce the counter down to 0 by adding the largest 
+    // possible Roman numeral to latinArray 
+    // and subtracting the Arabic equivalent from the counter
+    while (counter > 0) {
+      for (let digit of digits) {
+        if (counter - digit >= 0) {
+          latinArray.push(romanNumeralKey[digit]);
+          counter -= digit;
+          break
         }
       }
     }
-    
-    return latinArray;
+
+    return latinArray.join("");
    }
    
    
-console.log(convertToRoman(35));
-   
-
-// 325
-// 3 2 5
-// 300 20 5
-// CCC XX V
-
-// 1. Split numbers into array
-// 2. 
-
-// let arabicArray = num.toString()
-//                       .split("")
-//                       .map( (num, index, arr) => 
-//                         Number(num.concat("0".repeat(arr.length-1-index))))
-//                       .reverse();
-    
-//     let latinArray = [];
-
-//     for (i=0; i<arabicArray.length; i++) {
-//       let arabicNumeral = arabicArray[i];
-//       let romanNumeral;
-
-//       if([1, 4, 5, 9].includes(arabicNumeral)) {
-//         romanNumeral = romanNumerals[arabicNumeral];
-//       } else {
-//         romanNumeral = arabicNumeral /2
-//       }
-//       latinArray.unshift(romanNumeral);
-
-//     }
+console.log(convertToRoman(1024));

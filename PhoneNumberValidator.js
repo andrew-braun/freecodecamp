@@ -9,6 +9,7 @@
 
 // Conditional solution tailored to problem
 // Regex solution is a shorter alternative
+// In real-world use, a simple character/length check would be more flexible
 const telephoneCheck = (str) => {
 
     let cleanStr = str.replace(/[\D]/g, '');
