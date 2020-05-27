@@ -20,7 +20,11 @@ function checkCashRegister(price, cash, cid) {
   }
 
   // Find the total of the cash in the cash drawer
-  let totalCID = Number(Object.values(cashDrawer).reduce((a, b) => a + b).toFixed(2));
+  let totalCID = Number(
+    Object.values(cashDrawer)
+      .reduce((a, b) => a + b)
+      .toFixed(2)
+  );
 
   // Calculate change due
   let changeDue = cash - price;
@@ -35,7 +39,7 @@ function checkCashRegister(price, cash, cid) {
   if (changeDue > totalCID) {
     return insufficientFunds;
   }
-  
+
   // check for the exact change case
   if (changeDue == totalCID) {
     let changeStatus = {
@@ -43,71 +47,70 @@ function checkCashRegister(price, cash, cid) {
       change: cid,
     };
     return changeStatus;
-  } 
-
-  // Find the largest number that fits into the total change due
-
-  // Find how many times that number fits
-  
-  // Reduce by that number * value or max available in drawer
-
-  
-  
-  return("change?")
   }
 
-  // // Copy the changeDue number
-  // let changeCounter = Number(Object.assign(changeDue));
-  // // Set up an array containing the keys to look up denomination number values
-  // // reverse it so that largest values come first
-  // let valueArray = Object.keys(denominationValue).reverse()
-  // // Create an object to hold the change values
-  // let changeObject = {};
-// 
-  // Loop over changeCounter until it reaches 0
-// 
-  // while (changeCounter > 0) {
-      // find the largest value that fits
-    //   for (i=0; i<valueArray.length; i++) {
-    //       let key = valueArray[i];
-    //       console.log(key)
-    //       let cashValue = denominationValue[key];
-    //       // console.log(cashValue)
-    //       console.log(changeCounter - cashValue)
-    //       console.log(cashDrawer[key])
+  // Copy changeDue number to decrement as change is added
+  let changeCounter = Number(Object.assign(changeDue));
+  // Create an array that holds the denominations to look up
+  let valueArray = Object.keys(denominationValue).reverse();
+  // Initiate an object to store the change keys and values
+  let changeObject = {};
 
-    //       if (changeCounter - cashValue >= 0 && 
-    //           cashDrawer[key] - cashValue >= 0) {
-    //             console.log(changeCounter)
-    //         changeObject[key] = (changeObject[key] || 0);
-    //         changeObject[key] += cashValue;
-    //         cashDrawer[key] -= cashValue;
-    //         changeCounter -= cashValue;
-    //         i = 0;
-    //       } else if (changeCounter - cashValue < 0 
-    //         // || cashDrawer[key] - cashValue < 0
-    //         ) {
-    //            console.log(changeCounter)
-    //         valueArray = valueArray.slice(i);
-    //         i = 0;
+  for (let key of valueArray) {
+    // Store value of current denomination
+    let cashValue = Number(denominationValue[key].toFixed(2));
+    // Check if changeCounter and cashDrawer can both accommodate adding the change
+    if (changeCounter - cashValue >= 0 && cashDrawer[key] > 0) {
+      while (changeCounter - cashValue >= 0 && cashDrawer[key] > 0) {
+        // If denomination doesn't exist in changeObject, initiate it as 0
+        changeObject[key] = changeObject[key] || 0;
+        // Increment changeObject
+        changeObject[key] += cashValue;
 
-    //       } else {
-    //         console.log(cashValue)
-    //         return insufficientFunds;
-    //       }
-    //   }
-  
-    // }console.log(valueArray);
-    // console.log(changeObject);
+        // decrement changeCounter
+        changeCounter -= cashValue;
+        changeCounter = Number(changeCounter.toFixed(2));
 
+        // Decrement cashDrawer
+        cashDrawer[key] -= cashValue;
+      }
+    }
+  }
 
-    // return changeObject
+  if (changeCounter > 0) {
+    return insufficientFunds;
+  }
 
-let test = checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]])
+  let statusObject = {
+    status: "OPEN",
+    change: Object.entries(changeObject),
+  };
+
+  return statusObject;
+}
+
+let test = checkCashRegister(3.26, 100, [
+  ["PENNY", 1.01],
+  ["NICKEL", 2.05],
+  ["DIME", 3.1],
+  ["QUARTER", 4.25],
+  ["ONE", 90],
+  ["FIVE", 55],
+  ["TEN", 20],
+  ["TWENTY", 60],
+  ["ONE HUNDRED", 100],
+]);
 console.log(test);
 
-let test2 = checkCashRegister(19.5, 20, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])
+let test2 = checkCashRegister(19.5, 20, [
+  ["PENNY", 0.01],
+  ["NICKEL", 0],
+  ["DIME", 0],
+  ["QUARTER", 0],
+  ["ONE", 1],
+  ["FIVE", 0],
+  ["TEN", 0],
+  ["TWENTY", 0],
+  ["ONE HUNDRED", 0],
+]);
 console.log(test2);
-
-let test3 = checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])
-console.log(test3)
